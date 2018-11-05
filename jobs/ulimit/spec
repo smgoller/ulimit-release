@@ -4,6 +4,7 @@ name: ulimit
 templates:
   pre-start.sh.erb: bin/pre-start
   limits.conf.erb: etc/limits.conf
+  override.conf.erb: etc/override.conf
 
 packages:
 - pivotal_prlimit
