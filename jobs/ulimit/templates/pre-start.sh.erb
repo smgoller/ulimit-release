@@ -5,10 +5,17 @@ set -ex
 cp -f /var/vcap/jobs/ulimit/etc/limits.conf /etc/security/limits.d/62-ulimit.conf
 
 if [ -e "/lib/systemd/system/runit.service" ]; then
+  sv down /etc/service/*
+  systemctl stop runit
+  killall runsv
+  rm -f /etc/service/*/supervise/{lock,pid}
+
   mkdir -p /etc/systemd/system/runit.service.d
   cp -f /var/vcap/jobs/ulimit/etc/override.conf /etc/systemd/system/runit.service.d/override.conf
+
   systemctl daemon-reload
-  systemctl restart runit
+  systemctl start runit
+  sv up /etc/service/*
 fi
 
 monit_pid=$( ps -e | grep monit | awk '{print $1}' )
